@@ -1,24 +1,69 @@
 <!DOCTYPE html>
-
 <html>
-
 <head>
-</head>
-
-<body>
-    <form id="form">
-        <label for="rope-lengths">Enter rope lengths:</label>
-        <input type="text" id="rope-lengths">
-        <button type="button" onclick="calculateMinCost()">Calculate</button>
-      </form>
-      <div id="result"></div>
-
 <script>
-    type="text/javascript" src="./script.js"
+function calculateMinCost() {
+  var input = document.getElementById("ropesInput").value;
+  var ropes = input.split(",").map(Number);
 
-  </script>
-  
+  var minCost = findMinCost(ropes);
 
+  document.getElementById("result").innerHTML = minCost;
+}
+
+function findMinCost(ropes) {
+  // Sort the ropes in ascending order
+  ropes.sort(function(a, b) {
+    return a - b;
+  });
+
+  var totalCost = 0;
+  var currentCost = 0;
+
+  // Combine the ropes until only one rope remains
+  while (ropes.length > 1) {
+    // Take the two smallest ropes
+    var smallest1 = ropes.shift();
+    var smallest2 = ropes.shift();
+
+    // Calculate the cost of combining the ropes
+    currentCost = smallest1 + smallest2;
+
+    // Add the current cost to the total cost
+    totalCost += currentCost;
+
+    // Insert the combined rope back into the array in the correct position
+    var index = findInsertionIndex(ropes, currentCost);
+    ropes.splice(index, 0, currentCost);
+  }
+
+  return totalCost;
+}
+
+function findInsertionIndex(arr, value) {
+  var low = 0;
+  var high = arr.length - 1;
+
+  while (low <= high) {
+    var mid = Math.floor((low + high) / 2);
+
+    if (arr[mid] === value) {
+      return mid;
+    } else if (arr[mid] < value) {
+      low = mid + 1;
+    } else {
+      high = mid - 1;
+    }
+  }
+
+  return low;
+}
+</script>
+</head>
+<body>
+  <label for="ropesInput">Enter lengths of ropes (comma-separated):</label>
+  <input type="text" id="ropesInput">
+  <button onclick="calculateMinCost()">Calculate Minimum Cost</button>
+  <div id="result"></div>
 </body>
-
 </html>
